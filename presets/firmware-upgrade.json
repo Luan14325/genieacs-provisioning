@@ -1,0 +1,25 @@
+{
+  "name": "firmware-upgrade",
+  "weight": 50,
+  "events": [
+    { "type": "0 BOOTSTRAP" },
+    { "type": "2 PERIODIC" },
+    { "type": "M Download" }
+  ],
+  "precondition": "VirtualParameters.Upgrade = \"required\" AND Tags.TagList CONTAINS \"upgrade-now\" AND NOT (Tags.TagList CONTAINS \"upgrading\")",
+  "config": [
+    { "type": "tag", "op": "add", "name": "upgrading" },
+    { "type": "provision", "name": "firmware-upgrade" },
+
+    /* If you prefer task-driven upgrade, uncomment and point URL to your image
+    { "type": "task",
+      "name": "download",
+      "fileType": "1 Firmware Upgrade Image",
+      "url": "http://your-fw-server/mikrotik-6.49.npk"
+    },
+    */
+
+    { "type": "tag", "op": "remove", "name": "upgrade-now" },
+    { "type": "tag", "op": "remove", "name": "upgrading" }
+  ]
+}
