@@ -1,6 +1,5 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import fetch from "node-fetch";
 
 const ACS = process.env.ACS_BASE || "http://localhost:7557";
 

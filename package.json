@@ -1,4 +1,5 @@
-  {
+{
+  "type": "module",
   "scripts": {
     "test": "node test/structure.test.js",
     "seed:presets": "node tools/seed-presets.js"

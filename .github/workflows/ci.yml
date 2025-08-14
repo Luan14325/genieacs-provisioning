@@ -1,4 +1,3 @@
-
 name: CI
 
 on:
@@ -6,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  sanity:
+  sim:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,4 +13,25 @@ jobs:
         with:
           node-version: "20"
       - run: npm install
-      - run: npm test
+      - name: Start ACS stack
+        run: docker compose up -d
+      - name: Clone simulator
+        run: git clone https://github.com/zaidka/genieacs-sim.git && cd genieacs-sim && npm install
+      - name: Seed presets
+        run: npm run seed:presets
+        env:
+          ACS_BASE: http://localhost:7557
+      - name: Run simulator
+        run: node tools/run-sim.js 2>&1 | tee sim.log
+      - name: Verify upgrade states
+        run: node test/verify-upgrade.js 2>&1 | tee verify.log
+      - name: Collect ACS logs
+        run: docker compose logs genieacs > genieacs.log
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: |
+            sim.log
+            verify.log
+            genieacs.log
