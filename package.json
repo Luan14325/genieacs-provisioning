@@ -1,10 +1,6 @@
-{
-  "name": "genieacs-provisioning-starter",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
+  {
   "scripts": {
-    "test": "node test/structure.test.js"
-  },
-  "devDependencies": {}
+    "test": "node test/structure.test.js",
+    "seed:presets": "node tools/seed-presets.js"
+  }
 }
