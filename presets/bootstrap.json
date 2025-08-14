@@ -1,0 +1,9 @@
+{
+  "name": "bootstrap",
+  "weight": 90,
+  "events": [{ "type": "0 BOOTSTRAP" }],
+  "precondition": "true",
+  "config": [
+    { "type": "provision", "name": "bootstrap" }
+  ]
+}
