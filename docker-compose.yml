@@ -1,0 +1,34 @@
+
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  genieacs:
+    image: ${GENIEACS_IMAGE}
+    depends_on:
+      - mongo
+      - redis
+    restart: unless-stopped
+    environment:
+      GENIEACS_CWMP_PORT: 7547
+      GENIEACS_UI_PORT: 3000
+      GENIEACS_NBI_PORT: 7557
+    ports:
+      - "7547:7547"   # CWMP
+      - "3000:3000"   # UI
+      - "7557:7557"   # NBI
+    volumes:
+      - ./provisions:/app/provisions
+      - ./virtual-parameters:/app/virtual-parameters
+      - ./presets:/app/presets
