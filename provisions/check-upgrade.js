@@ -1,26 +1,31 @@
 const PFX = "check-upgrade: ";
 
-// Cache reads for GUI
-const current = declare("Device.DeviceInfo.SoftwareVersion", { value: 1 }).value?.[0] || "";
-const upgrade  = declare("VirtualParameters.Upgrade", { value: 1 }).value?.[0] || "";
-const target   = declare("VirtualParameters.SoftwareVersionTarget", { value: 1 }).value?.[0] || "6.49";
+// Cache reads for GUI visibility
+const currentVersion = declare("Device.DeviceInfo.SoftwareVersion", { value: 1 }).value?.[0] || "";
+const upgradeState   = declare("VirtualParameters.Upgrade", { value: 1 }).value?.[0] || "";
 
-// Only run when state is "ready"
-if (upgrade !== "ready") {
-  log(PFX + `skipping; state=${upgrade}`);
+// Only proceed if current state is "ready"
+if (upgradeState !== "ready") {
+  log(PFX + `Skipping; state=${upgradeState}`);
   return;
 }
 
-// RouterOS major tree check (v6 vs v7)
-const currentTree = current.charAt(0);
-// Your policy: single target 6.49 for ALL devices; keep arch checks if you wish.
-// Decide if upgrade required
-const needs = current !== target;
+let targetVersion = "";
+if (currentVersion.startsWith("6.")) {
+  targetVersion = "6.49";
+} else if (currentVersion.startsWith("7.")) {
+  targetVersion = "7.15";
+} else {
+  log(PFX + `Unknown RouterOS major for version ${currentVersion}, marking done.`);
+  declare("VirtualParameters.Upgrade", null, { value: "done" });
+  return;
+}
 
-if (needs) {
+// Compare current vs. target
+if (currentVersion !== targetVersion) {
   declare("VirtualParameters.Upgrade", null, { value: "required" });
-  log(PFX + `set Upgrade=required (current=${current}, target=${target})`);
+  log(PFX + `Set Upgrade=required (current=${currentVersion}, target=${targetVersion})`);
 } else {
   declare("VirtualParameters.Upgrade", null, { value: "done" });
-  log(PFX + `set Upgrade=done (already at target ${target})`);
+  log(PFX + `Set Upgrade=done (already at target ${targetVersion})`);
 }
