@@ -1,0 +1,12 @@
+{
+  "name": "check-upgrade",
+  "weight": 70,
+  "events": [
+    { "type": "0 BOOTSTRAP" },
+    { "type": "2 PERIODIC" }
+  ],
+  "precondition": "VirtualParameters.Upgrade = \"ready\"",
+  "config": [
+    { "type": "provision", "name": "check-upgrade" }
+  ]
+}
